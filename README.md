@@ -28,7 +28,7 @@ docker compose exec app bash
 ```
 (app コンテナ)
 ```shell
-cp /var/www/app
+cd /var/www/app
 rm .gitignore
 composer create-project laravel/laravel:^9 --prefer-dist .
 ```
