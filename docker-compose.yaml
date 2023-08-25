@@ -84,9 +84,9 @@ services:
         aliases:
           - localhost.proxy.sample.jp
 
-  crm-redis:
+  redis:
     image: redis:5-alpine
-    container_name: crm-redis
+    container_name: redis
     expose:
       - "6379"
     ports:
