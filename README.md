@@ -58,7 +58,7 @@ php artisan ide-helper:generate
 php artisan ide-helper:model
 ```
 
-### 5. アプリケーション初期設定
+### 6. アプリケーション初期設定
 (app コンテナ)
 ```shell
 composer install
@@ -68,7 +68,7 @@ npm run build
 exit
 ```
 
-### 6. データベース作成
+### 7. データベース作成
 (ローカル)
 ```shell
 docker compose exec db bash
@@ -82,7 +82,7 @@ mysql -u root -proot -e "CREATE DATABASE laravel_sample"
 exit
 ```
 
-### 6. アプリ側データベース接続設定
+### 8. アプリ側データベース接続設定
 (ローカル)
 
 app/.envの下記部分を変更
@@ -104,7 +104,7 @@ DB_USERNAME=laravelUser
 DB_PASSWORD=password000
 ```
 
-### 6. nodeコンテナ用設定
+### 9. nodeコンテナ用設定
 (ローカル)
 
 app/package.json の該当箇所に下記記述を追加。<br>
@@ -117,7 +117,7 @@ Node.js サーバー起動時、htmlに展開されるjsへのリンク(宛先�
 }
 ```
 
-### 7. 初期データ設定
+### 10. 初期データ設定
 (ローカル)
 
 app/database/seeders/UserSeeder.php を下記内容で追加。
@@ -168,13 +168,13 @@ php artisan migrate:fresh --seed
 exit
 ```
 
-### 8. コンテナ停止
+### 11. コンテナ停止
 (ローカル)
 ```shell
 docker compose down
 ```
 
-### 9. hosts設定
+### 12. hosts設定
 (ローカル)
 
 hosts に下記エントリーを追加
@@ -183,7 +183,7 @@ hosts に下記エントリーを追加
 127.0.0.1 localhost.node.sample.jp
 ```
 
-### 10. Node.js 起動モード変更
+### 13. Node.js 起動モード変更
 (ローカル)
 
 docker-compose.yaml の services/node/command の値を下記に変更する。
@@ -192,14 +192,14 @@ docker-compose.yaml の services/node/command の値を下記に変更する。
 docker
 ```
 
-### 11. コンテナ起動
+### 14. コンテナ起動
 (ローカル)
 ```shell
 docker compose build
 docker compose up -d
 ```
 
-### 12. ログイン
+### 15. ログイン
 ```
 http://localhost.app.sample.jp/login
 ```
@@ -208,7 +208,7 @@ Email : test@test.com
 Password : password123
 ```
 
-### 13. 開発にあたって
+### 16. 開発にあたって
 - 以降、Laravelもフロント側も、変更は動的にweb画面に反映される。
 - フロントについて`npm run dev`ではなく本番配置用ファイル生成だけをしたい場合は、上記項番10で`build`を指定する。
 - セッション管理等でRedis使用の場合は別途設定の必要あり。
