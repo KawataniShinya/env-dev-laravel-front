@@ -1,0 +1,17 @@
+#!/bin/bash
+
+rm -f /etc/nginx/conf.d/default.conf
+
+while :
+do
+  if [ -e /etc/nginx/conf.d/default.conf ]; then
+    sed -i -e "s/^server {/server {\n    fastcgi_connect_timeout $VIRTUAL_TIMEOUT;\n    fastcgi_send_timeout $VIRTUAL_TIMEOUT;\n    fastcgi_read_timeout $VIRTUAL_TIMEOUT;\n    proxy_connect_timeout $VIRTUAL_TIMEOUT;\n    proxy_send_timeout $VIRTUAL_TIMEOUT;\n    proxy_read_timeout $VIRTUAL_TIMEOUT;\n    send_timeout $VIRTUAL_TIMEOUT;\n    keepalive_timeout $VIRTUAL_TIMEOUT;/g" /etc/nginx/conf.d/default.conf
+    /usr/sbin/nginx -s stop
+    echo updated /etc/nginx/conf.d/default.conf
+    break
+  fi
+  echo waiting create /etc/nginx/conf.d/default.conf ...
+  sleep 1
+done &
+
+exec /app/docker-entrypoint.sh forego start -r
