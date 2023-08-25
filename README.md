@@ -45,20 +45,7 @@ composer require laravel/breeze:^1
 php artisan breeze:install vue
 ```
 
-### 5. Laravel補完ライブラリ追加
-(app コンテナ)
-
-A, B は開発途中で追加がある度に実行。
-```shell
-composer require --dev barryvdh/laravel-ide-helper
-composer require --dev doctrine/dbal
-## Facade --- A
-php artisan ide-helper:generate
-## Model --- B
-php artisan ide-helper:model
-```
-
-### 6. アプリケーション初期設定
+### 5. アプリケーション初期設定
 (app コンテナ)
 ```shell
 composer install
@@ -68,7 +55,7 @@ npm run build
 exit
 ```
 
-### 7. データベース作成
+### 6. データベース作成
 (ローカル)
 ```shell
 docker compose exec db bash
@@ -82,7 +69,7 @@ mysql -u root -proot -e "CREATE DATABASE laravel_sample"
 exit
 ```
 
-### 8. アプリ側データベース接続設定
+### 7. アプリ側データベース接続設定
 (ローカル)
 
 app/.envの下記部分を変更
@@ -103,6 +90,25 @@ DB_DATABASE=laravel_sample
 DB_USERNAME=laravelUser
 DB_PASSWORD=password000
 ```
+
+### 8. Laravel補完ライブラリ追加
+(ローカル)
+```shell
+docker compose exec app bash
+```
+(app コンテナ)
+
+A, B は開発途中で追加がある度に実行。
+```shell
+composer require --dev barryvdh/laravel-ide-helper
+composer require --dev doctrine/dbal
+## Facade --- A
+php artisan ide-helper:generate
+## Model --- B
+php artisan ide-helper:model
+exit
+```
+
 
 ### 9. nodeコンテナ用設定
 (ローカル)
