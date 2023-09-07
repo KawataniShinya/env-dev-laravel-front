@@ -5,6 +5,11 @@ services:
       context: ./docker/app
       dockerfile: Dockerfile
     container_name: app
+    environment:
+      TZ: "Asia/Tokyo"
+      PHP_XDEBUG: "On"
+      PHP_XDEBUG_REMOTE_HOST: "host.docker.internal"
+      PHP_IDE_CONFIG: serverName=server-xdebug
     volumes:
       - ./app:/var/www/app
     networks:
