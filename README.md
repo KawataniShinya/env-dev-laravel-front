@@ -220,5 +220,17 @@ Password : password123
 - セッション管理等でRedis使用の場合は別途設定の必要あり。
   - `composer require predis/predis:2.1`
   - [Redis設定](https://github.com/KawataniShinya/laravel-redis/compare/163ff23ebf09594c763bdc9d269d48ab4144c990..a90689c0ce613b5acdcaf03f85b388cae0fcddd9)
+- リクエストのタイムアウト値はデフォルト30分としているが、変更する場合は下記値を更新。
+  - docker-compose.yaml
+    - nginx-proxy -> environment -> VIRTUAL_TIMEOUT
+  - docker/app/nginx/default.conf
+    - fastcgi_connect_timeout 
+    - fastcgi_send_timeout
+    - fastcgi_read_timeout
+    - proxy_connect_timeout
+    - proxy_send_timeout
+    - proxy_read_timeout
+    - send_timeout
+    - keepalive_timeout
 - Xdebugを利用する場合はクライアント側に設定が必要
   - [Xdebug設定](https://github.com/KawataniShinya/php-sftp-docker/tree/main#phpstorm%E3%81%A7%E3%81%AExdebug%E8%A8%AD%E5%AE%9A) 
