@@ -79,7 +79,7 @@ services:
       dockerfile: Dockerfile
     container_name: nginx-proxy
     environment:
-      VIRTUAL_TIMEOUT: 60 # タイムアウト1分
+      VIRTUAL_TIMEOUT: 1800 # タイムアウト30分
     ports:
       - '80:80'
     volumes:
