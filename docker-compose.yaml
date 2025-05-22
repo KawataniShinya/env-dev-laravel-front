@@ -38,7 +38,7 @@ services:
           - localhost.node.sample.jp
 
   nginx-app:
-    image: nginx:latest
+    image: nginx:1.28.0-alpine
     container_name: nginx-app
     expose:
       - "80"
@@ -56,7 +56,6 @@ services:
     build:
       context: ./docker/mysql
       dockerfile: Dockerfile
-    image: mysql:latest
     container_name: db
     platform: linux/x86_64
     environment:

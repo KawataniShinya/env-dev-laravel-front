@@ -198,14 +198,31 @@ docker-compose.yaml の services/node/command の値を下記に変更する。
 docker
 ```
 
-### 14. コンテナ起動
+### 14. ホットリロード機能有効化
+dockerホスト環境ではホットリロードが効かないことがある。\
+予防のため`vite.config.js`に`usePolling: true`を追加。
+```
+export default defineConfig({
+    plugins: [
+      ...
+    ],
+    server: {
+      watch: {
+        usePolling: true,
+      }
+    }
+});
+```
+
+
+### 15. コンテナ起動
 (ローカル)
 ```shell
 docker compose build
 docker compose up -d
 ```
 
-### 15. ログイン
+### 16. ログイン
 ```
 http://localhost.app.sample.jp/login
 ```
@@ -214,7 +231,7 @@ Email : test@test.com
 Password : password123
 ```
 
-### 16. 開発にあたって
+### 17. 開発にあたって
 - 以降、Laravelもフロント側も、変更は動的にweb画面に反映される。
 - フロントについて`npm run dev`ではなく本番配置用ファイル生成だけをしたい場合は、上記項番10で`build`を指定する。
 - セッション管理等でRedis使用の場合は別途設定の必要あり。
