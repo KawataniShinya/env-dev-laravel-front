@@ -30,13 +30,13 @@ docker compose exec app bash
 ```shell
 cd /var/www/app
 rm .gitignore
-composer create-project laravel/laravel:^9 --prefer-dist .
+composer create-project laravel/laravel:^12 --prefer-dist .
 ```
 
 ### 3. Laravel Breeze インストール
 (app コンテナ)
 ```shell
-composer require laravel/breeze:^1
+composer require laravel/breeze:2.3.6
 ```
 
 ### 4. Inertia インストール
@@ -55,7 +55,19 @@ npm run build
 exit
 ```
 
-### 6. データベース作成
+### 6. フロントエンドビルド
+(ローカル)
+```shell
+docker compose exec node bash
+```
+(node コンテナ)
+```shell
+npm install
+npm run build
+exit
+```
+
+### 7. データベース作成
 (ローカル)
 ```shell
 docker compose exec db bash
@@ -69,7 +81,7 @@ mysql -u root -proot -e "CREATE DATABASE laravel_sample"
 exit
 ```
 
-### 7. アプリ側データベース接続設定
+### 8. アプリ側データベース接続設定
 (ローカル)
 
 app/.envの下記部分を変更
@@ -91,17 +103,17 @@ DB_USERNAME=laravelUser
 DB_PASSWORD=password000
 ```
 
-### 8. Laravel補完ライブラリ追加
+### 9. Laravel開発支援ライブラリ追加
 (ローカル)
 ```shell
 docker compose exec app bash
 ```
 (app コンテナ)
 
+#### IDE(統合開発環境)の補完や型推論を強化
 A, B は開発途中で追加がある度に実行。
 ```shell
 composer require --dev barryvdh/laravel-ide-helper
-composer require --dev doctrine/dbal
 ## Facade --- A
 php artisan ide-helper:generate
 ## Model --- B
@@ -109,8 +121,12 @@ php artisan ide-helper:model
 exit
 ```
 
+#### マイグレーション実行時により高度なスキーマ操作を行う
+```shell
+composer require --dev doctrine/dbal
+```
 
-### 9. nodeコンテナ用設定
+### 10. nodeコンテナ用設定
 (ローカル)
 
 app/package.json の該当箇所に下記記述を追加。<br>
@@ -123,7 +139,7 @@ Node.js サーバー起動時、htmlに展開されるjsへのリンク(宛先�
 }
 ```
 
-### 10. 初期データ設定
+### 11. 初期データ設定
 (ローカル)
 
 app/database/seeders/UserSeeder.php を下記内容で追加。
@@ -174,13 +190,13 @@ php artisan migrate:fresh --seed
 exit
 ```
 
-### 11. コンテナ停止
+### 12. コンテナ停止
 (ローカル)
 ```shell
 docker compose down
 ```
 
-### 12. hosts設定
+### 13. hosts設定
 (ローカル)
 
 hosts に下記エントリーを追加
@@ -189,7 +205,7 @@ hosts に下記エントリーを追加
 127.0.0.1 localhost.node.sample.jp
 ```
 
-### 13. Node.js 起動モード変更
+### 14. Node.js 起動モード変更
 (ローカル)
 
 docker-compose.yaml の services/node/command の値を下記に変更する。
@@ -198,7 +214,7 @@ docker-compose.yaml の services/node/command の値を下記に変更する。
 docker
 ```
 
-### 14. ホットリロード機能有効化
+### 15. ホットリロード機能有効化
 dockerホスト環境ではホットリロードが効かないことがある。\
 予防のため`vite.config.js`に`usePolling: true`を追加。
 ```
@@ -215,14 +231,14 @@ export default defineConfig({
 ```
 
 
-### 15. コンテナ起動
+### 16. コンテナ起動
 (ローカル)
 ```shell
 docker compose build
 docker compose up -d
 ```
 
-### 16. ログイン
+### 17. ログイン
 ```
 http://localhost.app.sample.jp/login
 ```
@@ -231,7 +247,7 @@ Email : test@test.com
 Password : password123
 ```
 
-### 17. 開発にあたって
+### 18. 開発にあたって
 - 以降、Laravelもフロント側も、変更は動的にweb画面に反映される。
 - フロントについて`npm run dev`ではなく本番配置用ファイル生成だけをしたい場合は、上記項番10で`build`を指定する。
 - セッション管理等でRedis使用の場合は別途設定の必要あり。
