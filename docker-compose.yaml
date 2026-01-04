@@ -56,7 +56,6 @@ services:
       context: ./docker/mysql
       dockerfile: Dockerfile
     container_name: db
-    platform: linux/x86_64
     environment:
       TZ: "Asia/Tokyo"
       MYSQL_ROOT_PASSWORD: root

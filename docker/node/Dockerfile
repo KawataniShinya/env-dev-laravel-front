@@ -1,4 +1,4 @@
-FROM node:24.0.2
+FROM node:25.2.1
 
 WORKDIR "/var/www/app"
 

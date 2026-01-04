@@ -1,4 +1,4 @@
-FROM mysql:8.4.5-oraclelinux9
+FROM mysql:9.5.0-oraclelinux9
 
 RUN microdnf install dnf -y
 RUN dnf -y update

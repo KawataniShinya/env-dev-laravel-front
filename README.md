@@ -30,13 +30,13 @@ docker compose exec app bash
 ```shell
 cd /var/www/app
 rm .gitignore
-composer create-project laravel/laravel:^12 --prefer-dist .
+composer create-project laravel/laravel:12.1.0 --prefer-dist .
 ```
 
 ### 3. Laravel Breeze インストール
 (app コンテナ)
 ```shell
-composer require laravel/breeze:2.3.6
+composer require laravel/breeze:2.3.8
 ```
 
 ### 4. Inertia インストール
@@ -50,8 +50,6 @@ php artisan breeze:install vue
 ```shell
 composer install
 php artisan key:generate
-npm install
-npm run build
 exit
 ```
 
@@ -230,15 +228,30 @@ export default defineConfig({
 });
 ```
 
+### 16. セッションRedis化
+セッション管理にRedisを利用するように変更。
 
-### 16. コンテナ起動
+(ローカル)
+
+app/.envの下記部分を変更
+```
+#修正前
+SESSION_DRIVER=database
+REDIS_HOST=127.0.0.1
+
+#修正後
+SESSION_DRIVER=redis
+REDIS_HOST=redis
+```
+
+### 17. コンテナ起動
 (ローカル)
 ```shell
 docker compose build
 docker compose up -d
 ```
 
-### 17. ログイン
+### 18. ログイン
 ```
 http://localhost.app.sample.jp/login
 ```
@@ -247,12 +260,26 @@ Email : test@test.com
 Password : password123
 ```
 
-### 18. 開発にあたって
+### 19. セッション保存確認
+Redisコンテナにセッションが保存されていることを確認。
+
+(ローカル)
+```shell
+docker compose exec redis sh
+```
+
+(Redis コンテナ)
+```shell
+redis-cli
+> KEYS *
+1) "laravel-database-laravel-cache-8ROIIdtNkleH06LckPcIFoHBZwLo9yL3jqJKDozG"
+> get laravel-database-laravel-cache-8ROIIdtNkleH06LckPcIFoHBZwLo9yL3jqJKDozG
+"s:218:\"a:3:{s:6:\"_token\";s:40:\"LOmQAsgnZ3h9m8d0rdpNkyhDwUozA6DjiqfCrPh5\";s:9:\"_previous\";a:2:{s:3:\"url\";s:36:\"http://localhost.app.sample.jp/login\";s:5:\"route\";s:5:\"login\";}s:6:\"_flash\";a:2:{s:3:\"old\";a:0:{}s:3:\"new\";a:0:{}}}\";"
+```
+
+### 20. 開発にあたって
 - 以降、Laravelもフロント側も、変更は動的にweb画面に反映される。
 - フロントについて`npm run dev`ではなく本番配置用ファイル生成だけをしたい場合は、上記項番10で`build`を指定する。
-- セッション管理等でRedis使用の場合は別途設定の必要あり。
-  - `composer require predis/predis:2.1`
-  - [Redis設定](https://github.com/KawataniShinya/laravel-redis/compare/163ff23ebf09594c763bdc9d269d48ab4144c990..a90689c0ce613b5acdcaf03f85b388cae0fcddd9)
 - リクエストのタイムアウト値はデフォルト30分としているが、変更する場合は下記値を更新。
   - docker-compose.yaml
     - nginx-proxy -> environment -> VIRTUAL_TIMEOUT
