@@ -30,13 +30,13 @@ docker compose exec app bash
 ```shell
 cd /var/www/app
 rm .gitignore
-composer create-project laravel/laravel:^9 --prefer-dist .
+composer create-project laravel/laravel:12.1.0 --prefer-dist .
 ```
 
 ### 3. Laravel Breeze インストール
 (app コンテナ)
 ```shell
-composer require laravel/breeze:^1
+composer require laravel/breeze:2.3.8
 ```
 
 ### 4. Inertia インストール
@@ -50,12 +50,22 @@ php artisan breeze:install vue
 ```shell
 composer install
 php artisan key:generate
+exit
+```
+
+### 6. フロントエンドビルド
+(ローカル)
+```shell
+docker compose exec node bash
+```
+(node コンテナ)
+```shell
 npm install
 npm run build
 exit
 ```
 
-### 6. データベース作成
+### 7. データベース作成
 (ローカル)
 ```shell
 docker compose exec db bash
@@ -69,7 +79,7 @@ mysql -u root -proot -e "CREATE DATABASE laravel_sample"
 exit
 ```
 
-### 7. アプリ側データベース接続設定
+### 8. アプリ側データベース接続設定
 (ローカル)
 
 app/.envの下記部分を変更
@@ -91,17 +101,17 @@ DB_USERNAME=laravelUser
 DB_PASSWORD=password000
 ```
 
-### 8. Laravel補完ライブラリ追加
+### 9. Laravel開発支援ライブラリ追加
 (ローカル)
 ```shell
 docker compose exec app bash
 ```
 (app コンテナ)
 
+#### IDE(統合開発環境)の補完や型推論を強化
 A, B は開発途中で追加がある度に実行。
 ```shell
 composer require --dev barryvdh/laravel-ide-helper
-composer require --dev doctrine/dbal
 ## Facade --- A
 php artisan ide-helper:generate
 ## Model --- B
@@ -109,8 +119,12 @@ php artisan ide-helper:model
 exit
 ```
 
+#### マイグレーション実行時により高度なスキーマ操作を行う
+```shell
+composer require --dev doctrine/dbal
+```
 
-### 9. nodeコンテナ用設定
+### 10. nodeコンテナ用設定
 (ローカル)
 
 app/package.json の該当箇所に下記記述を追加。<br>
@@ -123,7 +137,7 @@ Node.js サーバー起動時、htmlに展開されるjsへのリンク(宛先�
 }
 ```
 
-### 10. 初期データ設定
+### 11. 初期データ設定
 (ローカル)
 
 app/database/seeders/UserSeeder.php を下記内容で追加。
@@ -174,13 +188,13 @@ php artisan migrate:fresh --seed
 exit
 ```
 
-### 11. コンテナ停止
+### 12. コンテナ停止
 (ローカル)
 ```shell
 docker compose down
 ```
 
-### 12. hosts設定
+### 13. hosts設定
 (ローカル)
 
 hosts に下記エントリーを追加
@@ -189,7 +203,7 @@ hosts に下記エントリーを追加
 127.0.0.1 localhost.node.sample.jp
 ```
 
-### 13. Node.js 起動モード変更
+### 14. Node.js 起動モード変更
 (ローカル)
 
 docker-compose.yaml の services/node/command の値を下記に変更する。
@@ -198,14 +212,46 @@ docker-compose.yaml の services/node/command の値を下記に変更する。
 docker
 ```
 
-### 14. コンテナ起動
+### 15. ホットリロード機能有効化
+dockerホスト環境ではホットリロードが効かないことがある。\
+予防のため`vite.config.js`に`usePolling: true`を追加。
+```
+export default defineConfig({
+    plugins: [
+      ...
+    ],
+    server: {
+      watch: {
+        usePolling: true,
+      }
+    }
+});
+```
+
+### 16. セッションRedis化
+セッション管理にRedisを利用するように変更。
+
+(ローカル)
+
+app/.envの下記部分を変更
+```
+#修正前
+SESSION_DRIVER=database
+REDIS_HOST=127.0.0.1
+
+#修正後
+SESSION_DRIVER=redis
+REDIS_HOST=redis
+```
+
+### 17. コンテナ起動
 (ローカル)
 ```shell
 docker compose build
 docker compose up -d
 ```
 
-### 15. ログイン
+### 18. ログイン
 ```
 http://localhost.app.sample.jp/login
 ```
@@ -214,12 +260,26 @@ Email : test@test.com
 Password : password123
 ```
 
-### 16. 開発にあたって
+### 19. セッション保存確認
+Redisコンテナにセッションが保存されていることを確認。
+
+(ローカル)
+```shell
+docker compose exec redis sh
+```
+
+(Redis コンテナ)
+```shell
+redis-cli
+> KEYS *
+1) "laravel-database-laravel-cache-8ROIIdtNkleH06LckPcIFoHBZwLo9yL3jqJKDozG"
+> get laravel-database-laravel-cache-8ROIIdtNkleH06LckPcIFoHBZwLo9yL3jqJKDozG
+"s:218:\"a:3:{s:6:\"_token\";s:40:\"LOmQAsgnZ3h9m8d0rdpNkyhDwUozA6DjiqfCrPh5\";s:9:\"_previous\";a:2:{s:3:\"url\";s:36:\"http://localhost.app.sample.jp/login\";s:5:\"route\";s:5:\"login\";}s:6:\"_flash\";a:2:{s:3:\"old\";a:0:{}s:3:\"new\";a:0:{}}}\";"
+```
+
+### 20. 開発にあたって
 - 以降、Laravelもフロント側も、変更は動的にweb画面に反映される。
 - フロントについて`npm run dev`ではなく本番配置用ファイル生成だけをしたい場合は、上記項番10で`build`を指定する。
-- セッション管理等でRedis使用の場合は別途設定の必要あり。
-  - `composer require predis/predis:2.1`
-  - [Redis設定](https://github.com/KawataniShinya/laravel-redis/compare/163ff23ebf09594c763bdc9d269d48ab4144c990..a90689c0ce613b5acdcaf03f85b388cae0fcddd9)
 - リクエストのタイムアウト値はデフォルト30分としているが、変更する場合は下記値を更新。
   - docker-compose.yaml
     - nginx-proxy -> environment -> VIRTUAL_TIMEOUT
