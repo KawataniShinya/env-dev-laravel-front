@@ -212,8 +212,11 @@ docker-compose.yaml の services/node/command の値を下記に変更する。
 docker
 ```
 
-### 15. ホットリロード機能有効化
-dockerホスト環境ではホットリロードが効かないことがある。\
+### 15. オリジン許可とホットリロード機能有効化
+開発環境ではフロントエンドのホットリロードのため、バックエンドとは別コンテナで動作させる。\
+その際に発生するCORSエラーを避けるため、`vite.config.js`にヘッダー`access-control-allow-origin: *`を付加する設定を追加。
+
+また、dockerホスト環境ではホットリロードが効かないことがある。\
 予防のため`vite.config.js`に`usePolling: true`を追加。
 ```
 export default defineConfig({
@@ -221,9 +224,12 @@ export default defineConfig({
       ...
     ],
     server: {
-      watch: {
-        usePolling: true,
-      }
+        cors: {
+            origin: '*',
+        },
+        watch: {
+            usePolling: true,
+        }
     }
 });
 ```
